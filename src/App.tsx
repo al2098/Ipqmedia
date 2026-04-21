@@ -43,7 +43,8 @@ function CADCard({ children, title, subtitle, i }: { children?: React.ReactNode,
   return (
     <motion.div 
       variants={fadeInUp}
-      className="group relative p-8 border border-white/10 transition-all duration-300 hover:border-brand-red bg-[#222222]/50 h-full"
+      whileHover={{ scale: 1.02 }}
+      className="group relative p-8 border border-white/10 transition-all duration-300 hover:border-brand-red bg-[#222222]/50 h-full hover:shadow-xl hover:shadow-brand-red/5"
     >
       {/* CAD Selection Corners */}
       <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-brand-red opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -149,26 +150,27 @@ function PageContent() {
             </div>
             
             <h1 className="text-[64px] md:text-[110px] leading-[0.9] font-bold tracking-tighter mb-6 uppercase text-white overflow-hidden">
-              {SITE_DATA.hero.title.split(' ').map((word, i) => (
+              {SITE_DATA.hero.title.split('. ').map((segment, i) => (
                 <motion.span 
                   key={i} 
-                  className="block"
+                  className={cn("block", i === 2 && "text-brand-red text-[42px] md:text-[64px] mt-4 tracking-normal normal-case italic font-serif")}
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 + (i * 0.1), ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.8, delay: 0.4 + (i * 0.2), ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {word}
+                  {segment}{i < 2 ? "." : ""}
                 </motion.span>
               ))}
             </h1>
 
             <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.8 }}
-              transition={{ duration: 1, delay: 1 }}
+              variants={fadeInUp}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={{ once: true, margin: "-100px" }}
               className="text-[#E0E0E0] text-base md:text-lg max-w-md mb-12 leading-relaxed italic"
             >
-              "God is in the details." We apply architectural precision to your firm's growth pipeline, connecting visionary studios with high-net-worth commissions.
+              "Precision is the foundational geometry of the high-end commission." We apply architectural precision to your firm's growth pipeline, connecting visionary studios with high-net-worth commissions.
             </motion.p>
             
             <motion.div 
@@ -202,7 +204,7 @@ function PageContent() {
                 className={cn("bg-[#1A1A1A] py-10 flex flex-col items-center border-white/5", i % 2 !== 0 && "border-l", i >= 2 && "border-t")}
               >
                 <span className={cn("text-5xl font-black mb-2 text-white", i === 3 && "editorial-stroke")}>{stat.value}</span>
-                <span className="text-[10px] uppercase tracking-widest text-[#E0E0E0]/60 font-medium">{stat.label}</span>
+                <span className="text-[10px] uppercase tracking-widest text-[#E0E0E0]/60 font-medium px-4 text-center">{stat.label}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -219,14 +221,29 @@ function PageContent() {
           
           {/* Action Callout area */}
           <div className="p-12 border-t border-white/10 bg-[#222222]">
-            <div className="text-[10px] uppercase tracking-widest font-bold mb-8 text-brand-red">Architectural Intent</div>
-            <p className="text-[#E0E0E0] text-sm leading-relaxed mb-8 opacity-80">
-              We don't just "market" firms. We engineer acquisition layers that mirror the quality of your built portfolio.
-            </p>
-            <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setIsModalOpen(true)}>
-              <span className="text-[10px] uppercase tracking-widest font-bold group-hover:text-brand-red transition-colors text-white">Start Audit</span>
-              <div className="flex-1 h-px bg-white/10 group-hover:bg-brand-red transition-colors"></div>
-            </div>
+            <motion.div variants={fadeInUp} initial="initial" whileInView="whileInView" viewport={{ once: true }}>
+              <div className="text-[10px] uppercase tracking-widest font-bold mb-8 text-brand-red">Architectural Intent</div>
+              <p className="text-[#E0E0E0] text-sm leading-relaxed mb-8 opacity-80">
+                We don't just "market" firms. We engineer acquisition layers that mirror the quality of your built portfolio.
+              </p>
+            </motion.div>
+            <motion.div 
+              variants={fadeInUp} 
+              initial="initial" 
+              whileInView="whileInView" 
+              viewport={{ once: true }}
+              className="flex items-center gap-4 group cursor-pointer" 
+              onClick={() => setIsModalOpen(true)}
+            >
+              <span className="text-[10px] uppercase tracking-widest font-bold group-hover:text-brand-red transition-colors text-white">Claim Your Firm's Diagnostic</span>
+              <div className="flex-1 h-px bg-white/10 group-hover:bg-brand-red transition-all duration-500 relative overflow-hidden">
+                <motion.div 
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  className="absolute inset-0 bg-brand-red"
+                />
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -282,9 +299,9 @@ function PageContent() {
             02 / Implementation
           </motion.span>
           <motion.h2 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="whileInView"
             viewport={{ once: true }}
             className="text-4xl md:text-6xl font-medium uppercase tracking-tight text-white"
           >
@@ -327,9 +344,10 @@ function PageContent() {
       <section id="philosophy" className="py-40 px-10 bg-[#0A0A0A] text-white overflow-hidden relative border-b border-white/10">
         <motion.div 
           className="max-w-4xl ml-auto text-right"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
+          variants={fadeInUp}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={{ once: true }}
         >
           <p className="text-[10px] text-brand-red italic uppercase tracking-[0.4em] mb-4">
             The Philosophy
@@ -349,17 +367,30 @@ function PageContent() {
       {/* Final CTA */}
       <section className="py-32 px-6 text-center border-b border-white/10 bg-[#1A1A1A]">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-4xl md:text-7xl font-medium uppercase tracking-tighter mb-12 leading-[0.9] text-white">
-            READY TO SCALE<br/>YOUR LEGACY?
-          </h2>
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="group relative inline-flex items-center gap-4 bg-brand-red text-white px-12 py-6 text-sm uppercase tracking-widest overflow-hidden transition-all shadow-xl shadow-brand-red/10"
+          <motion.h2 
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="whileInView"
+            viewport={{ once: true }}
+            className="text-4xl md:text-7xl font-medium uppercase tracking-tighter mb-12 leading-[0.9] text-white"
           >
-            <span className="relative z-10">{SITE_DATA.hero.cta}</span>
-            <ArrowRight className="relative z-10 group-hover:translate-x-2 transition-transform" />
-            <div className="absolute inset-0 bg-[#8B0000] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          </button>
+            READY TO SCALE<br/>YOUR LEGACY?
+          </motion.h2>
+          <motion.div
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="whileInView"
+            viewport={{ once: true }}
+          >
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="group relative inline-flex items-center gap-4 bg-brand-red text-white px-12 py-6 text-sm uppercase tracking-widest overflow-hidden transition-all shadow-xl shadow-brand-red/10"
+            >
+              <span className="relative z-10">{SITE_DATA.hero.cta}</span>
+              <ArrowRight className="relative z-10 group-hover:translate-x-2 transition-transform" />
+              <div className="absolute inset-0 bg-[#8B0000] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            </button>
+          </motion.div>
         </div>
       </section>
 

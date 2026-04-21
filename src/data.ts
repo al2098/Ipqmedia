@@ -1,50 +1,50 @@
 export const SITE_DATA = {
   hero: {
-    title: "WE'LL GET YOU HIGH-END PROJECTS",
-    subtitle: "The architecture industry's first performance-based client acquisition system. Engineered for prestige, built for growth.",
+    title: "WE ENGINEER YOUR PIPELINE. THE MARKET BOWS. STOP COMPETING FOR BIDS: START SELECTING YOUR LEGACY.",
+    subtitle: "The architecture industry's first performance-based Domain Authority system. Engineered for prestige, built for continuous Commission Flow.",
     cta: "Book an Introduction",
   },
   stats: [
-    { value: "50+", label: "Firms Served" },
-    { value: "$120M+", label: "Pipeline Generated" },
-    { value: "100%", label: "Exclusive Areas" },
-    { value: "0", label: "Initial Risk" },
+    { value: "50+", label: "Studios now choose predictable pipelines." },
+    { value: "$120M+", label: "In commissions unlocked." },
+    { value: "100%", label: "Exclusive market domains." },
+    { value: "Zero", label: "Initial fees. Your first project covers the system." },
   ],
   services: {
-    title: "WHAT WE DO",
+    title: "DOMAIN AUTHORITY",
     items: [
       { 
-        title: "Strategic Positioning", 
-        description: "Moving from a generalist firm to an category-leader in high-end residential or commercial sectors." 
-      },
-      { 
-        title: "Digital Identity", 
-        description: "Redesigning your digital presence to mirror the precision and elegance of your physical works." 
-      },
-      { 
-        title: "Qualified Inbound", 
-        description: "Building systems that attract clients who value your architectural vision, not just your price." 
-      },
-      { 
         title: "Pipeline Engineering", 
-        description: "A continuous flow of Tier-1 projects so you can be selective about the work you accept." 
+        description: "Moving from random referrals to a precision-engineered Digital Twin of your ideal project flow." 
+      },
+      { 
+        title: "Curated Inquiries", 
+        description: "Filter out the noise. We implement high-readability gates to ensure you only speak with Tier-1 commissions." 
+      },
+      { 
+        title: "Selective Capacity", 
+        description: "Regain the power to say 'No.' Build the backlog that allows you to choose your legacy projects." 
+      },
+      { 
+        title: "System Deployment", 
+        description: "We deploy the acquisition infrastructure that mirrors the surgical precision of your built works." 
       },
       { 
         title: "Conversion Logic", 
-        description: "Refining the transition from discovery to signed contract with architect-specific sales workflows." 
+        description: "Refining the transition from discovery to signed commission with architect-specific neuro-marketing." 
       },
       { 
-        title: "Market Domain", 
-        description: "Establishing absolute authority in your geographic market or chosen design niche." 
+        title: "Domain Authority", 
+        description: "Establishing absolute architectural authority so you occupy the primary position in your niche." 
       },
     ]
   },
   process: {
-    title: "THE PROCESS",
+    title: "THE STRATIGRAPHY",
     steps: [
-      { id: "01", title: "Apply", desc: "We evaluate your current firm structure and market potential." },
-      { id: "02", title: "We Build", desc: "Our team implements the acquisition infrastructure over 30 days." },
-      { id: "03", title: "You Sign", desc: "You receive qualified intros and begin signing high-value projects." },
+      { id: "01", title: "DIAGNOSTIC", desc: "A psychological and structural audit of your firm's current marketplace footprint." },
+      { id: "02", title: "SYSTEM DEPLOYMENT", desc: "We construct and integrate your custom pipeline engine over a 30-day sprint." },
+      { id: "03", title: "LOCK THE PROJECT", desc: "Activate a predictable stream of curated inquiries while retaining full creative control." },
     ]
   },
   quote: {
@@ -52,8 +52,8 @@ export const SITE_DATA = {
     author: "Ludwig Mies van der Rohe"
   },
   footer: {
-    tagline: "IPQ MEDIA | CLIENT ACQUISITION FOR ARCHITECTS.",
+    tagline: "IPQ MEDIA | PIPELINE ENGINEERING FOR ARCHITECTS.",
     copyright: "© 2024 IPQ MEDIA. All rights reserved.",
-    easterEgg: "We speak Mies. Your site passes."
+    easterEgg: "We speak Mies. Your system is sound."
   }
 };

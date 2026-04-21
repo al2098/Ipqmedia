@@ -6,90 +6,94 @@ import * as THREE from 'three';
 // Hero Isometric Grid Component
 export function IsometricGrid({ theme }: { theme: 'ink' | 'blueprint' | 'trace' }) {
   const groupRef = useRef<THREE.Group>(null);
+  const particlesRef = useRef<THREE.Points>(null);
   const lineColor = theme === 'blueprint' ? '#E63946' : '#FFFFFF';
   const opacity = theme === 'trace' ? 0.3 : 1;
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
     if (groupRef.current) {
-      // Complex multi-axis rotation
-      groupRef.current.rotation.y += 0.0005;
-      groupRef.current.rotation.x = Math.PI / 6 + Math.sin(time * 0.2) * 0.05;
-      
-      // Subtle "breathing" scale
-      const pulse = 1 + Math.sin(time * 0.5) * 0.02;
-      groupRef.current.scale.set(pulse, pulse, pulse);
+      // Smooth continuous orbit: 360 degrees (2*PI) every 20 seconds
+      groupRef.current.rotation.y = (time * Math.PI * 2) / 20;
+      // Subtle architectural tilt variation
+      groupRef.current.rotation.x = Math.PI / 6 + Math.sin(time * 0.1) * 0.02;
+    }
+
+    if (particlesRef.current) {
+      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+      for (let i = 0; i < positions.length; i += 3) {
+        // Uniform downward flow speed
+        positions[i + 1] -= 0.012; 
+        
+        // Funnel convergence logic: as y descends from 2 to -2, pull x and z towards center
+        // At y=2, multiplier is ~1.0. At y=-2, multiplier is ~0.1
+        const yPos = positions[i + 1];
+        const funnelFactor = Math.max(0.1, (yPos + 2) / 4);
+        
+        // Apply convergence: we use a slight damping to move towards the center
+        // to simulate particles "matching" the funnel geometry
+        positions[i] *= 0.99;
+        positions[i + 2] *= 0.99;
+
+        if (positions[i + 1] < -2) {
+          // Reset to top with high spread (top of funnel)
+          positions[i + 1] = 2; 
+          positions[i] = (Math.random() - 0.5) * 4;
+          positions[i + 2] = (Math.random() - 0.5) * 4;
+        }
+      }
+      particlesRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
 
   const lines = useMemo(() => {
-    const size = 10;
-    const step = 0.5;
+    const size = 5;
+    const step = 1;
     const gridLines = [];
-    
-    // Create grid lines manually for finer control
     for (let i = -size; i <= size; i += step) {
-      gridLines.push(
-        new THREE.Vector3(-size, 0, i),
-        new THREE.Vector3(size, 0, i),
-        new THREE.Vector3(i, 0, -size),
-        new THREE.Vector3(i, 0, size)
-      );
+      gridLines.push(new THREE.Vector3(-size, 0, i), new THREE.Vector3(size, 0, i));
+      gridLines.push(new THREE.Vector3(i, 0, -size), new THREE.Vector3(i, 0, size));
     }
-    return new THREE.Float32BufferAttribute(
-      gridLines.flatMap(v => [v.x, v.y, v.z]),
-      3
-    );
+    return new THREE.Float32BufferAttribute(gridLines.flatMap(v => [v.x, v.y, v.z]), 3);
   }, []);
 
-  // Use a separate component for pillars to animate them individually
-  function Pillar({ pos, color, op }: { pos: [number, number, number], color: string, op: number }) {
-    const pillarRef = useRef<THREE.Group>(null);
-    useFrame((state) => {
-      if (pillarRef.current) {
-        const time = state.clock.getElapsedTime();
-        const offset = pos[0] + pos[2];
-        pillarRef.current.scale.y = 1 + Math.sin(time + offset) * 0.5;
-      }
-    });
-
-    return (
-      <group ref={pillarRef} position={pos}>
-        <lineSegments>
-          <bufferGeometry>
-            <bufferAttribute 
-              attach="attributes-position" 
-              {...new THREE.Float32BufferAttribute([0, 0, 0, 0, 1.5, 0], 3)} 
-            />
-          </bufferGeometry>
-          <lineBasicMaterial color={color} transparent opacity={op} />
-        </lineSegments>
-      </group>
-    );
-  }
+  const particles = useMemo(() => {
+    const count = 800; // Increased density for 'curated inquiries'
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 4;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 4;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 4;
+    }
+    return new THREE.BufferAttribute(pos, 3);
+  }, []);
 
   return (
     <group ref={groupRef} rotation={[Math.PI / 6, Math.PI / 4, 0]}>
+      {/* The Section Cut: Wireframe + Solid */}
+      <mesh position={[0, -0.5, 0]}>
+        <boxGeometry args={[4, 1, 4]} />
+        <meshBasicMaterial color={lineColor} wireframe transparent opacity={0.2} />
+      </mesh>
+      <mesh position={[0, -0.75, 0]}>
+        <boxGeometry args={[3.8, 0.5, 3.8]} />
+        <meshBasicMaterial color={lineColor} transparent opacity={0.05} />
+      </mesh>
+
       <lineSegments>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" {...lines} />
         </bufferGeometry>
-        <lineBasicMaterial color={lineColor} transparent opacity={opacity} linewidth={0.5} />
+        <lineBasicMaterial color={lineColor} transparent opacity={opacity * 0.3} />
       </lineSegments>
-      
-      {/* vertical pillars with individual growth animations */}
-      {[...Array(12)].map((_, i) => (
-        <Pillar 
-          key={i} 
-          pos={[
-            (Math.random() - 0.5) * 10, 
-            0, 
-            (Math.random() - 0.5) * 10
-          ]} 
-          color={lineColor} 
-          op={opacity * 0.4} 
-        />
-      ))}
+
+      {/* Parametric Particles (Pipeline Funnel) */}
+      <points ref={particlesRef}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" {...particles} />
+        </bufferGeometry>
+        <pointsMaterial color={lineColor} size={0.03} transparent opacity={0.6} />
+      </points>
     </group>
   );
 }
@@ -120,7 +124,7 @@ export function ExtrudedStat({ value, theme }: { value: string, theme: string })
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
         <group ref={groupRef}>
-          <Float speed={3} rotationIntensity={1} floatIntensity={1}>
+          <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
             <Text
               font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGkyMZhrib2Bg-4.ttf"
               fontSize={1.2}
