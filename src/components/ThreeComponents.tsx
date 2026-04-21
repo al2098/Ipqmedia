@@ -7,16 +7,39 @@ import * as THREE from 'three';
 export function IsometricGrid({ theme }: { theme: 'ink' | 'blueprint' | 'trace' }) {
   const groupRef = useRef<THREE.Group>(null);
   const particlesRef = useRef<THREE.Points>(null);
+  const gridMaterialRef = useRef<THREE.LineBasicMaterial>(null);
+  const scannerRef = useRef<THREE.Group>(null);
   const lineColor = theme === 'blueprint' ? '#E63946' : '#FFFFFF';
   const opacity = theme === 'trace' ? 0.3 : 1;
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
     if (groupRef.current) {
-      // Smooth continuous orbit: 360 degrees (2*PI) every 20 seconds
       groupRef.current.rotation.y = (time * Math.PI * 2) / 20;
-      // Subtle architectural tilt variation
       groupRef.current.rotation.x = Math.PI / 6 + Math.sin(time * 0.1) * 0.02;
+    }
+
+    // Ambient Pulsation for Grid
+    if (gridMaterialRef.current) {
+      const pulse = 0.2 + Math.sin(time * 1.5) * 0.1;
+      gridMaterialRef.current.opacity = pulse * opacity;
+    }
+
+    // Scanner nodes floating animation
+    if (scannerRef.current) {
+      scannerRef.current.children.forEach((child, i) => {
+        const mesh = child as THREE.Mesh;
+        const node = scannerNodes[i];
+        if (!node) return;
+
+        // Organic varied wave motion
+        const wave = Math.sin(time * node.speed + node.offset);
+        mesh.position.y = node.position[1] + wave * 0.5;
+        
+        // Non-uniform opacity pulse with staggered delay
+        const material = mesh.material as THREE.MeshBasicMaterial;
+        material.opacity = (Math.cos(time * (node.speed * 0.8) + node.offset) + 1) * 0.15 * opacity;
+      });
     }
 
     if (particlesRef.current) {
@@ -68,6 +91,14 @@ export function IsometricGrid({ theme }: { theme: 'ink' | 'blueprint' | 'trace' 
     return new THREE.BufferAttribute(pos, 3);
   }, []);
 
+  const scannerNodes = useMemo(() => {
+    return [...Array(8)].map(() => ({
+      position: [(Math.random() - 0.5) * 6, (Math.random() - 0.5) * 4, (Math.random() - 0.5) * 6] as [number, number, number],
+      speed: 0.4 + Math.random() * 0.8,
+      offset: Math.random() * Math.PI * 2,
+    }));
+  }, []);
+
   return (
     <group ref={groupRef} rotation={[Math.PI / 6, Math.PI / 4, 0]}>
       {/* The Section Cut: Wireframe + Solid */}
@@ -84,8 +115,18 @@ export function IsometricGrid({ theme }: { theme: 'ink' | 'blueprint' | 'trace' 
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" {...lines} />
         </bufferGeometry>
-        <lineBasicMaterial color={lineColor} transparent opacity={opacity * 0.3} />
+        <lineBasicMaterial ref={gridMaterialRef} color={lineColor} transparent opacity={opacity * 0.3} />
       </lineSegments>
+
+      {/* Ambient Architectural Nodes */}
+      <group ref={scannerRef}>
+        {scannerNodes.map((node, i) => (
+          <mesh key={i} position={node.position}>
+            <boxGeometry args={[0.06, 0.06, 0.06]} />
+            <meshBasicMaterial color={lineColor} transparent opacity={0} />
+          </mesh>
+        ))}
+      </group>
 
       {/* Parametric Particles (Pipeline Funnel) */}
       <points ref={particlesRef}>

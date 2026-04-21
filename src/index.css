@@ -17,6 +17,28 @@
   }
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(45deg, rgba(230, 57, 70, 0.4) 1px, transparent 1px),
+    linear-gradient(-45deg, rgba(230, 57, 70, 0.4) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.03;
+  animation: bgShift 30s linear infinite;
+}
+
+@keyframes bgShift {
+  from { background-position: 0 0; }
+  to { background-position: 120px 120px; }
+}
+
 .cad-grid {
   background-image: 
     linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
