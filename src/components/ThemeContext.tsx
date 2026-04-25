@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type ThemeMode = 'ink' | 'blueprint' | 'trace';
+type ThemeMode = 'home' | 'ink' | 'blueprint' | 'trace';
 
 interface ThemeContextType {
   theme: ThemeMode;
@@ -10,7 +10,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<ThemeMode>('blueprint');
+  const [theme, setTheme] = useState<ThemeMode>('home');
 
   useEffect(() => {
     // Apply class to body for global styling
@@ -18,8 +18,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     body.className = ''; // Reset
     body.classList.add(`mode-${theme}`);
     
-    if (theme === 'blueprint') {
-      body.style.backgroundColor = '#8B0000';
+    if (theme === 'blueprint' || theme === 'home') {
+      body.style.backgroundColor = '#0A0A0A'; // Architecture/System theme often black
       body.style.color = '#FFFFFF';
     } else if (theme === 'ink') {
       body.style.backgroundColor = '#0A0A0A';

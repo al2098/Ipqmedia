@@ -4,12 +4,12 @@ import { Text, Float, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Hero Isometric Grid Component
-export function IsometricGrid({ theme }: { theme: 'ink' | 'blueprint' | 'trace' }) {
+export function IsometricGrid({ theme }: { theme: 'home' | 'ink' | 'blueprint' | 'trace' }) {
   const groupRef = useRef<THREE.Group>(null);
   const particlesRef = useRef<THREE.Points>(null);
   const gridMaterialRef = useRef<THREE.LineBasicMaterial>(null);
   const scannerRef = useRef<THREE.Group>(null);
-  const lineColor = theme === 'blueprint' ? '#E63946' : '#FFFFFF';
+  const lineColor = (theme === 'blueprint' || theme === 'home') ? '#E63946' : '#FFFFFF';
   const opacity = theme === 'trace' ? 0.3 : 1;
 
   useFrame((state) => {
@@ -185,7 +185,7 @@ export function ExtrudedStat({ value, theme }: { value: string, theme: string })
 }
 
 // Hero Scene Wrapper
-export function Hero3D({ theme }: { theme: 'ink' | 'blueprint' | 'trace' }) {
+export function Hero3D({ theme }: { theme: 'home' | 'ink' | 'blueprint' | 'trace' }) {
   return (
     <div className="absolute inset-0 z-0 opacity-40 md:opacity-100 pointer-events-none">
       <Canvas dpr={[1, 2]}>
