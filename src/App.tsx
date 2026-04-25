@@ -4,6 +4,7 @@ import { LucideIcon, Menu, X, ArrowRight, Check, Play, BookOpen, Quote, Info } f
 import { SITE_DATA } from './data';
 import { ThemeProvider, useTheme } from './components/ThemeContext';
 import { Hero3D, ExtrudedStat } from './components/ThreeComponents';
+import { InkPage } from './components/InkPage';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -60,8 +61,8 @@ function CADCard({ children, title, subtitle, i }: { children?: React.ReactNode,
   );
 }
 
-// Main Page Content
-function PageContent() {
+// Blueprint Page Content (Original PageContent)
+function BlueprintPage() {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,10 +75,8 @@ function PageContent() {
     restDelta: 0.001
   });
 
-  const isDark = theme === 'blueprint';
-
   return (
-    <div className={cn("min-h-screen font-sans", theme === 'trace' && "bg-white/90 backdrop-blur-sm")}>
+    <div id="blueprint-page" className={cn("min-h-screen font-sans", theme === 'trace' && "bg-white/90 backdrop-blur-sm")}>
       {/* Scroll Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-[2px] bg-brand-red z-[100] origin-left"
@@ -89,11 +88,13 @@ function PageContent() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/10 bg-[#0A0A0A]/80 backdrop-blur-md flex items-center justify-between px-10 h-16 transition-colors duration-500">
         <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setTheme('blueprint')}>
             <span className="font-bold tracking-tighter text-xl uppercase text-white">IPQ <span className="font-light text-brand-red">MEDIA</span></span>
           </div>
           <div className="h-4 w-px bg-white/10 hidden md:block"></div>
-          <div className="hidden md:flex gap-6 text-[10px] uppercase tracking-widest text-[#E0E0E0]">
+          <div className="hidden md:flex items-center gap-6 text-[10px] uppercase tracking-widest text-[#E0E0E0]">
+            <button onClick={() => setTheme('blueprint')} className="hover:text-brand-red transition-colors font-bold">Home</button>
+            <div className="w-px h-2 bg-white/10" />
             <a href="#services" className="hover:text-brand-red transition-colors">Systems</a>
             <a href="#process" className="hover:text-brand-red transition-colors">Process</a>
             <a href="#philosophy" className="hover:text-brand-red transition-colors">Philosophy</a>
@@ -491,10 +492,41 @@ function PageContent() {
   );
 }
 
+// App Content Switcher
+function AppContent() {
+  const { theme } = useTheme();
+
+  return (
+    <AnimatePresence mode="wait">
+      {theme === 'ink' ? (
+        <motion.div
+          key="ink"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 20 }}
+          transition={{ duration: 0.5 }}
+        >
+          <InkPage />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="blueprint"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.5 }}
+        >
+          <BlueprintPage />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
-      <PageContent />
+      <AppContent />
     </ThemeProvider>
   );
 }
